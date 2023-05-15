@@ -1,3 +1,48 @@
 h1 {
     color: blue;
 }
+
+div#main {
+    height: 300px;
+    width: 300px;
+    position: absolute;
+    margin: 0 auto;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    /* background-color: bisque; */
+}
+div.circle {
+    position: absolute;
+     width: 60px;
+    height: 60px; 
+    border: 2px solid black;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    /* text-align: center;
+    align-content: stretch;
+    flex-wrap: wrap; */
+}
+div.circle span {
+    min-width: 20px;
+    min-height: 20px;
+    /*align-self: center;*/
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    
+    /* border: 2px solid black;
+    border-radius: 50%; */
+}
+#main-form {
+    left: 50%;
+    top: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%)
+}
+body {
+    margin: 0 auto;
+}

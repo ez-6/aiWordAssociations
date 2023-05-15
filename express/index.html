@@ -11,8 +11,7 @@
 <style>
 </style>
 <body>
-
-    <h1>test !!!!</h1>
+    <div id="main" ></div>
 
     <form id="main-form">
         <input type="text" name="inputs"/>
@@ -20,11 +19,12 @@
     </form>
 
     <script type="module">
-        import { onFormSubmitted} from './main.js'
+        import { onFormSubmitted, generateCircleElements} from './main.js'
          const form = document.querySelector('#main-form');
-         form.addEventListener("submit", onFormSubmitted)
+         form.addEventListener("submit", onFormSubmitted);
+         //debugger;
     </script>
 
-    
+
 </body>
 </html>

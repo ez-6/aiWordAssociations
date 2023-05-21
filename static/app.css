@@ -1,42 +1,42 @@
-h1 {
-    color: blue;
+div.container {
+  background-color: black;
+  width: 100%;
+  height: 100vh;
 }
 
 div#main {
     height: 300px;
-    width: 300px;
+    width: 500px;
     position: absolute;
     margin: 0 auto;
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
-    /* background-color: bisque; */
 }
-div.circle {
-    position: absolute;
-     width: 60px;
-    height: 60px; 
+
+.inputText{
+    font-size: 1rem;
+    outline: 0;
+    border: 2px solide white;
+    background-color: aliceblue;
+    padding: 10px;
+}
+
+.submitBtn {
+    background-color: rgba(24, 24, 155, 0.925);
+    padding: 12px;
+    font-size: 1rem;
+    color: white;
     border: 2px solid black;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    /* text-align: center;
-    align-content: stretch;
-    flex-wrap: wrap; */
+    transition: 0.2s opacity;
+    border-left: none;
 }
-div.circle span {
-    min-width: 20px;
-    min-height: 20px;
-    /*align-self: center;*/
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    
-    /* border: 2px solid black;
-    border-radius: 50%; */
+
+.submitBtn:hover{
+    opacity: 0.8;
+    cursor: pointer;
 }
+
 #main-form {
     left: 50%;
     top: 50%;
@@ -46,3 +46,66 @@ div.circle span {
 body {
     margin: 0 auto;
 }
+
+  .floatingWord {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: 
+      move-x 10s linear infinite, 
+      move-y 10s linear infinite;
+    font-size: 2.2rem;
+    -webkit-text-stroke: 1px rgb(39, 39, 39);
+  }
+  
+  .floatingWord:hover {
+    animation-play-state: paused;
+    cursor: pointer;
+  }
+  
+  @keyframes move-x {
+    0% {
+      left: 0;
+      animation-timing-function: ease-in;
+    }
+    25% {
+      left: 50%;
+      animation-timing-function: ease-out;
+    }
+    50% {
+      left: 100%;
+      animation-timing-function: ease-in;
+    }
+    75% {
+      left: 50%;
+      animation-timing-function: ease-out;
+    }
+    100% {
+      left: 0%;
+      animation-timing-function: ease-in;
+    }
+  }
+  
+  @keyframes move-y {
+    0% {
+      top: 50%;
+      animation-timing-function: ease-out;
+    }
+    25% {
+      top: 0;
+      animation-timing-function: ease-in;
+    }
+    50% {
+      top: 50%;
+      animation-timing-function: ease-out;
+    }
+    75% {
+      top: 100%;
+      animation-timing-function: ease-in;
+    }
+    100% {
+      top: 50%;
+      animation-timing-function: ease-out;
+    }
+  }

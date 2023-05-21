@@ -1,9 +1,11 @@
-function onFormSubmitted(e) {
+var colorPalette = ['red', 'green', 'purple', 'black', 'orange', 'yellow', 'maroon', 'grey', 'lightblue', 'tomato', 'pink', 'maroon', 'cyan', 'magenta', 'blue', 'chocolate', 'darkslateblue', 'coral', 'blueviolet', 'burlywood', 'cornflowerblue', 'crimson', 'darkgoldenrod', 'olive', 'sienna', 'red'];
+
+async function onFormSubmitted(e) {
     e.preventDefault();
 
     const form = document.querySelector('#main-form');
     const query = form.elements.inputs.value;
-    // TBD - use Axios instead of fetch
+    // TBD - use Axios instead of fetch ?
     fetch("/words", {
         method: "POST",
         headers: {
@@ -14,96 +16,101 @@ function onFormSubmitted(e) {
         })
     })
         .then((res => res.json()))
-        .then(data => {
-            console.log(data)
+        .then(async data => {
+            console.log(data);
+             loadFont(data.fontName);
             const maxSideLength = Math.ceil(Math.max(form.clientHeight, form.clientWidth));
-            generateCircleElements(data, maxSideLength, 'main')
+            setupWordElements(data, maxSideLength * 1.1, 'main')
         })
 }
 
-function getWords(req, res) {
-    res.send('["one", "two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"]');
-}
-
-function generateCircleElements(data, radius, id) {
-    const frags = 360 / data.length;
-    let theta = [];
-    for (var i = 0; i <= data.length; i++) {
-        theta.push((frags / 180) * (data.length - i) * Math.PI);
+function loadFont(fontName){
+    if (!document.getElementById(fontName)) {
+      var head = document.getElementsByTagName('head')[0];
+      var link = document.createElement('link');
+      link.id = fontName;
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'http://fonts.googleapis.com/css?family=' + fontName;
+      link.media = 'all';
+      head.appendChild(link);
     }
-    setupCircleElements(data, theta, radius, id);
 }
 
-function setupCircleElements(data, theta, radius, id) {
+function setupWordElements(data, radius, id) {
     var main = document.getElementById(id);
+    const { words, colors, fontName } = data;
+    setColorsPalette(colors);
     main.innerHTML = ""; // reset any existing elements inside main component
-    const mainHeight = parseInt(window.getComputedStyle(main).height.slice(0, -2));
-    //debugger;
-    var circleArray = [];
-    var colors = ['red', 'green', 'purple', 'black', 'orange', 'yellow', 'maroon', 'grey', 'lightblue', 'tomato', 'pink', 'maroon', 'cyan', 'magenta', 'blue', 'chocolate', 'darkslateblue', 'coral', 'blueviolet', 'burlywood', 'cornflowerblue', 'crimson', 'darkgoldenrod', 'olive', 'sienna', 'red'];
-    for (var i = 0; i < theta.length - 1; i++) {
-        // var circle = document.createElement('div');
-        // circle.className = 'circle number' + i;
-        // circleArray.push(circle);
-        // circleArray[i].posx = Math.round(radius * (Math.cos(theta[i]))) + 'px';
-        // circleArray[i].posy = Math.round(radius * (Math.sin(theta[i]))) + 'px';
-        // circleArray[i].style.position = "absolute";
-        // circleArray[i].style.backgroundColor = colors[i];
-        // circleArray[i].style.top = ((mainHeight / 2) - parseInt(circleArray[i].posy.slice(0, -2))) + 'px';
-        // circleArray[i].style.left = ((mainHeight/ 2 ) + parseInt(circleArray[i].posx.slice(0, -2))) + 'px';
-        // main.appendChild(circleArray[i]);
-       const wordElement = createWordElement(data[i], radius, theta[i], mainHeight);
-        main.appendChild(wordElement)
+    const caruselElement = getCaruselElement(main, 50);
+    main.appendChild(caruselElement);
+    
+    const totalAnimationIterationMs = 12000;
+    let step = totalAnimationIterationMs / words.length;
+    let delay = 0;
+    for (var i = 0; i < words.length - 1; i++) {
+        const wordElement = createWordElement(words[i], fontName);
+        addWordAnimation(wordElement, delay + (step*i));
+        caruselElement.appendChild(wordElement)
     }
-    //main.appendChild(createCenterWordElement(radius, mainHeight))
 };
 
-var getColor = () => { 
-    const colors = ['red', 'green', 'purple', 'black', 'orange', 'yellow', 'maroon', 'grey', 'lightblue', 'tomato', 'pink', 'maroon', 'cyan', 'magenta', 'blue', 'chocolate', 'darkslateblue', 'coral', 'blueviolet', 'burlywood', 'cornflowerblue', 'crimson', 'darkgoldenrod', 'olive', 'sienna', 'red'];
+function getWords(req, res) {
+    //res.send('["one", "two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"]');
+    res.send('{ "words": ["frightening", "scary", "creepy", "spooky", "fearsome", "macabre", "terrifying", "dreadful"], "colors": ["#000000", "#9b0502", "#3e1006", "#f2f2f2", "#f7f7f7" ], "fontName": "Nosifer" }');
+    //res.send('{ "words": ["frightening", "scary"], "colors": ["#000000", "#9b0502", "#3e1006", "#f2f2f2", "#f7f7f7" ], "fontName": "Nosifer" }');
+}
 
-    if ( typeof getColor.idx == 'undefined' ) {
-        // It has not... perform the initialization
+function getCaruselElement(mainElement, padding) {
+    const caruselElement = document.createElement('div');
+    
+    caruselElement.id = 'carousel';
+    caruselElement.style.width = mainElement.clientWidth + 'px';
+    caruselElement.style.height = mainElement.clientHeight + 'px';
+    caruselElement.style.padding = padding + 'px';
+    caruselElement.style.position = 'relative';
+    caruselElement.style.borderRadius = '50%';
+    //caruselElement.style.border = '1px solid white';
+    caruselElement.style.marginTop = '-' + padding + 'px';
+    caruselElement.style.marginLeft = '-' + padding + 'px';
+
+    return caruselElement;
+}
+
+// Static function to obtain a new Color for each word
+var getColor = () => {
+    if (typeof getColor.idx == 'undefined') {
+        // If has not... perform the initialization
         getColor.idx = 0;
     }
-    getColor.idx = (getColor.idx + 1) % colors.length;
+    getColor.idx = (getColor.idx + 1) % colorPalette.length;
 
-    return colors[getColor.idx];
+    return colorPalette[getColor.idx];
 }
 
-function createWordElement(text, radius, theta, mainHeight) {
-    var wordElement = document.createElement('div');    
-    var wordtext = document.createElement('span');
-    wordtext.innerHTML = text;
-    wordElement.appendChild(wordtext);
-    wordElement.className = 'circle';
-    //var colors = ['red', 'green', 'purple', 'black', 'orange', 'yellow', 'maroon', 'grey', 'lightblue', 'tomato', 'pink', 'maroon', 'cyan', 'magenta', 'blue', 'chocolate', 'darkslateblue', 'coral', 'blueviolet', 'burlywood', 'cornflowerblue', 'crimson', 'darkgoldenrod', 'olive', 'sienna', 'red'];
-    //circleArray.push(wordElement);
-    wordElement.posx = Math.round(radius * (Math.cos(theta))) + 'px';
-    wordElement.posy = Math.round(radius * (Math.sin(theta))) + 'px';
-    wordElement.style.position = "absolute";
-    wordElement.style.backgroundColor = getColor(); //colors[i];
-    wordElement.style.top = ((mainHeight / 2) - parseInt(wordElement.posy.slice(0, -2))) + 'px';
-    wordElement.style.left = ((mainHeight / 2) + parseInt(wordElement.posx.slice(0, -2))) + 'px';
+function setColorsPalette(newPalette){
+    if (!newPalette || newPalette.length <= 0)
+    return;
+
+    colorPalette = newPalette;
+}
+
+function addWordAnimation(wordElement, delayMs){
+    wordElement.style.animationDelay = '-' + delayMs + 'ms';
+}
+
+function createWordElement(text, fontName) {
+    var wordElement = document.createElement('div');
+    wordElement.innerHTML = text;
+    wordElement.style.color = getColor();
+    wordElement.style.fontFamily = fontName;
+    wordElement.className = 'floatingWord';
+
+    wordElement.addEventListener("click", function() {
+        navigator.clipboard.writeText(text)
+    });
 
     return wordElement;
 }
 
-function createCenterWordElement(radius, mainHeight) {
-    var wordElement = document.createElement('div');    
-    var wordtext = document.createElement('span');
-    wordtext.innerHTML = '1';
-    wordElement.appendChild(wordtext);
-    wordElement.className = 'circle';
-    //var colors = ['red', 'green', 'purple', 'black', 'orange', 'yellow', 'maroon', 'grey', 'lightblue', 'tomato', 'pink', 'maroon', 'cyan', 'magenta', 'blue', 'chocolate', 'darkslateblue', 'coral', 'blueviolet', 'burlywood', 'cornflowerblue', 'crimson', 'darkgoldenrod', 'olive', 'sienna', 'red'];
-    //circleArray.push(wordElement);
-    wordElement.posx = 0+ 'px'; //Math.round(radius) + 'px';
-    wordElement.posy = 0 + 'px'; //Math.round(radius) + 'px';
-    wordElement.style.position = "absolute";
-    wordElement.style.backgroundColor = 'red'; //colors[i];
-    wordElement.style.top = ((mainHeight / 2) - parseInt(wordElement.posy.slice(0, -2))) + 'px';
-    wordElement.style.left = ((mainHeight / 2) + parseInt(wordElement.posx.slice(0, -2))) + 'px';
-
-    return wordElement;
-}
-
-export { onFormSubmitted, getWords, generateCircleElements }
+export { onFormSubmitted, getWords } 

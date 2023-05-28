@@ -35,7 +35,7 @@ npm i
 node express
 ```
 #### Example
-This is a possible result when entering 'joyfull' as the input term.
+This is a possible result when entering 'joyful' as the input term.
 
 ![Example imaage](https://raw.githubusercontent.com/ez-6/aiWordAssociations/main/example-images/joyful.jpg)
 

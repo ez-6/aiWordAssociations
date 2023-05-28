@@ -16,16 +16,50 @@
     <div id="main" >
     </div>
 
-    <form id="main-form">
-        <input class="inputText" type="text" name="inputs"/><button class="submitBtn">Submit</button>
+    <form id="main-form" action="/word" method="post">
+        <div>
+        <input class="inputText" type="text" name="inputs"/><button class="submitBtn" name="submit">Submit</button>
+    </div>
+    <div>
+        <div class="errorMessage" id="errorMessage" hidden="true">Invalid input. Please try again</div>
+    </div>
     </form>
 
-    <script type="module">
-        import { onFormSubmitted} from './main.js'
+    <script type="module"> 
+        import { processResponse, disableForm, showErrorMessage} from './main.js'
+
          const form = document.querySelector('#main-form');
-         form.addEventListener("submit", onFormSubmitted);
+         form.addEventListener("submit", function(e){
+            e.preventDefault();
+
+            disableForm(true);
+            showErrorMessage(false);
+
+            const query = form.elements.inputs.value;
+            console.log(query);
+            fetch("/words", {
+                method: "POST",
+                headers: {
+                    //"Content-Type": "application/x-www-form-urlencoded"
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify( {query: query})
+                // body: {
+                //     //query: query,
+                //     test: 'teststt'
+                // }
+            }).then( jsonRes => jsonRes.json() )
+            .then( resData => {
+                processResponse(resData);
+            }).catch(err => {
+                console.error('received invalid response');
+                showErrorMessage(true);
+            }).then( ()=>{
+                disableForm(false);
+            })
+         });
          //debugger;
-    </script>
+    </script> 
 
 </div>
 </body>
